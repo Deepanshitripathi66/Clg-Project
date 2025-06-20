@@ -5,6 +5,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 
+const { UserModel } = require("./model/UserModel");
+const { HoldingsModel } = require("./model/HoldingsModel");
+const { PositionsModel } = require("./model/PositionsModel");
+const { OrdersModel } = require("./model/OrdersModel");
+
 const app = express();
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
@@ -22,16 +27,32 @@ if (!isValidMongoUrl(uri)) {
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ Serve React and Dashboard build files
+// Serve frontend and dashboard
 app.use("/dashboard", express.static(path.join(__dirname, "../Dashboard/build")));
 app.use("/", express.static(path.join(__dirname, "../frontend/build")));
 
-// ✅ API Endpoints
+// ✅ Signup Route
+app.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
 
-// Get all holdings
+  try {
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json("User already exists");
+    }
+
+    const newUser = new UserModel({ name, email, password });
+    await newUser.save();
+    res.status(201).json("User created successfully");
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json("Error signing up");
+  }
+});
+
+// API Endpoints
 app.get("/allHoldings", async (req, res) => {
   try {
-    const { HoldingsModel } = require("./model/HoldingsModel");
     const data = await HoldingsModel.find();
     res.status(200).json(data);
   } catch (err) {
@@ -39,10 +60,8 @@ app.get("/allHoldings", async (req, res) => {
   }
 });
 
-// Update net/day in holdings
 app.post("/updateHoldingsNetDay", async (req, res) => {
   try {
-    const { HoldingsModel } = require("./model/HoldingsModel");
     const holdings = await HoldingsModel.find();
 
     for (const holding of holdings) {
@@ -66,10 +85,8 @@ app.post("/updateHoldingsNetDay", async (req, res) => {
   }
 });
 
-// Get all positions
 app.get("/allPositions", async (req, res) => {
   try {
-    const { PositionsModel } = require("./model/PositionsModel");
     const data = await PositionsModel.find();
     res.status(200).json(data);
   } catch (err) {
@@ -77,12 +94,8 @@ app.get("/allPositions", async (req, res) => {
   }
 });
 
-// Place a new order
 app.post("/newOrder", async (req, res) => {
   try {
-    const { OrdersModel } = require("./model/OrdersModel");
-    const { HoldingsModel } = require("./model/HoldingsModel");
-
     const newOrder = new OrdersModel(req.body);
     await newOrder.save();
 
@@ -123,7 +136,7 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-// ✅ React & Dashboard Routing fallback (wildcard)
+// React & Dashboard fallback routes
 app.get("*", (req, res) => {
   if (req.originalUrl.startsWith("/dashboard")) {
     res.sendFile(path.join(__dirname, "../Dashboard/build/index.html"));
@@ -132,7 +145,7 @@ app.get("*", (req, res) => {
   }
 });
 
-// ✅ Connect MongoDB and start server
+// Connect MongoDB and start server
 mongoose
   .connect(uri)
   .then(() => {

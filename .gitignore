@@ -1,5 +1,17 @@
 node_modules/
 **/node_modules/
+Dashboard/build/
+
 
 .env
+.env
+.env.local
+
+# Ignore log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
 .DS_Store
+Thumbs.db

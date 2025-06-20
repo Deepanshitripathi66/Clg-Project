@@ -14,23 +14,24 @@ GitHub: [@Deepanshitripathi66](https://github.com/Deepanshitripathi66)
 
 ## 🚀 Tech Stack
 
-| Layer       | Technology                |
-|-------------|---------------------------|
-| Frontend    | React.js, HTML, CSS       |
-| Backend     | Node.js, Express.js       |
-| Database    | MongoDB + Mongoose        |
-| Charts      | Recharts / Chart.js       |
-| Hosting     | Render.com                |
+|| Layer     | Technology                |
+|-----------|---------------------------|
+| Frontend  | React.js, HTML, CSS       |
+| Backend   | Node.js, Express.js       |
+| Database  | MongoDB + Mongoose        |
+| Charts    | Recharts / Chart.js       |
+| Hosting   | Render.com                |
+
 
 ---
 
 ## 📁 Project Structure
-clg-project/
-├── backend/ → Express server, MongoDB models & schemas
+ clg-project/
+├── backend/ → Express server, MongoDB models & APIs
 ├── frontend/ → React frontend (built & served via Express)
-├── dashboard/ → React components for trading dashboard
+├── dashboard/ → Trading dashboard components (React)
 ├── .env → Environment configuration
-├── package.json → Combined scripts for full stack
+└── package.json → Combined scripts for full stack
 
 ## ⚠️ Important Notes
 
@@ -44,6 +45,22 @@ clg-project/
   npm start
   or
   npx start
+   Serve frontend + backend together
+bash
+Copy code
+cd ../backend
+npm start
+App will run on:
+🔗 http://localhost:3002
+
+
+🌐 Live Deployment
+Hosted on Render
+
+🔗 Live App: https://clg-project-ut7l.onrender.com
+  
+  📱 Mobile Access
+You can open the app on any mobile browser:
 
 
 

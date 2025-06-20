@@ -1,23 +1,28 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend server for full-stack app",
+  "description": "Backend for Zerodha-inspired trading app",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "express": "^4.18.2",
     "mongoose": "^8.16.0",
-    "body-parser": "^2.2.0",
     "passport": "^0.7.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "keywords": [],
+  "author": "Deepanshi Tripathi",
+  "license": "ISC"
 }

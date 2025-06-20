@@ -23,8 +23,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Serve React build files
-app.use("/dashboard", express.static(path.resolve(__dirname, "../Dashboard/build")));
-app.use("/", express.static(path.resolve(__dirname, "../frontend/build")));
+app.use("/dashboard", express.static(path.join(__dirname, "Dashboard/build")));
+app.use("/", express.static(path.join(__dirname, "frontend/build")));
 
 // API Endpoints
 app.get("/allHoldings", async (req, res) => {
@@ -125,19 +125,19 @@ app.post("/newOrder", async (req, res) => {
 // Frontend wildcard route
 app.get("*", (req, res) => {
   if (req.originalUrl.startsWith("/dashboard")) {
-    res.sendFile(path.resolve(__dirname, "../Dashboard/build/index.html"));
+    res.sendFile(path.join(__dirname, "Dashboard/build/index.html"));
   } else {
-    res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
+    res.sendFile(path.join(__dirname, "frontend/build/index.html"));
   }
 });
 
-// MongoDB connection + Server start
-mongoose
-  .connect(uri)
-  .then(() => {
-    console.log("Connected to MongoDB");
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error("MongoDB connection failed", err);
-  });
+  // MongoDB connection + Server start
+  mongoose
+    .connect(uri)
+    .then(() => {
+      console.log("Connected to MongoDB");
+      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch((err) => {
+      console.error("MongoDB connection failed", err);
+    });

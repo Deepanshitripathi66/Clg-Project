@@ -26,8 +26,10 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // ✅ Serve static files (React build)
-app.use("/", express.static(path.join(__dirname, "frontend/build")));
-app.use("/dashboard", express.static(path.join(__dirname, "Dashboard/build")));
+const projectRoot = path.resolve(__dirname, "..");
+
+app.use("/", express.static(path.join(projectRoot, "frontend/build")));
+app.use("/dashboard", express.static(path.join(projectRoot, "Dashboard/build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
@@ -142,9 +144,9 @@ app.post("/newOrder", async (req, res) => {
 // ✅ Fallback route for React and Dashboard (Single Page App)
 app.get("*", (req, res) => {
   if (req.originalUrl.startsWith("/dashboard")) {
-    res.sendFile(path.join(__dirname, "Dashboard/build/index.html"));
+    res.sendFile(path.join(projectRoot, "Dashboard/build/index.html"));
   } else {
-    res.sendFile(path.join(__dirname, "frontend/build/index.html"));
+    res.sendFile(path.join(projectRoot, "frontend/build/index.html"));
   }
 });
 

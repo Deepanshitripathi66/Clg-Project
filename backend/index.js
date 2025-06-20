@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -16,28 +15,24 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
 
-// MongoDB URL Validation
-function isValidMongoUrl(url) {
-  return typeof url === "string" && url.startsWith("mongodb");
-}
-if (!isValidMongoUrl(uri)) {
-  console.error("❌ Invalid MONGO_URL");
+// ✅ MongoDB URL Validation
+if (!uri || !uri.startsWith("mongodb")) {
+  console.error("❌ Invalid or missing MONGO_URL");
   process.exit(1);
 }
 
-// Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Serve frontend and dashboard
-app.use("/dashboard", express.static(path.join(__dirname, "../Dashboard/build")));
-app.use("/", express.static(path.join(__dirname, "../frontend/build")));
+// ✅ Serve static files (React build)
+app.use("/", express.static(path.join(__dirname, "frontend/build")));
+app.use("/dashboard", express.static(path.join(__dirname, "Dashboard/build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -48,13 +43,7 @@ app.post("/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new UserModel({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
+    const newUser = new UserModel({ name, email, password: hashedPassword });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });
@@ -64,7 +53,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// API Endpoints
+// ✅ Holdings Routes
 app.get("/allHoldings", async (req, res) => {
   try {
     const data = await HoldingsModel.find();
@@ -77,7 +66,6 @@ app.get("/allHoldings", async (req, res) => {
 app.post("/updateHoldingsNetDay", async (req, res) => {
   try {
     const holdings = await HoldingsModel.find();
-
     for (const holding of holdings) {
       if (holding.qty === 0 || holding.price === 0) {
         holding.net = "0.00";
@@ -89,7 +77,6 @@ app.post("/updateHoldingsNetDay", async (req, res) => {
         holding.net = netChange.toFixed(2);
         holding.day = dayChange.toFixed(2);
       }
-
       await holding.save();
     }
 
@@ -99,6 +86,7 @@ app.post("/updateHoldingsNetDay", async (req, res) => {
   }
 });
 
+// ✅ Positions Route
 app.get("/allPositions", async (req, res) => {
   try {
     const data = await PositionsModel.find();
@@ -108,6 +96,7 @@ app.get("/allPositions", async (req, res) => {
   }
 });
 
+// ✅ Orders Route
 app.post("/newOrder", async (req, res) => {
   try {
     const newOrder = new OrdersModel(req.body);
@@ -150,16 +139,16 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-// React & Dashboard fallback routes
+// ✅ Fallback route for React and Dashboard (Single Page App)
 app.get("*", (req, res) => {
   if (req.originalUrl.startsWith("/dashboard")) {
-    res.sendFile(path.join(__dirname, "../Dashboard/build/index.html"));
+    res.sendFile(path.join(__dirname, "Dashboard/build/index.html"));
   } else {
-    res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
+    res.sendFile(path.join(__dirname, "frontend/build/index.html"));
   }
 });
 
-// Connect MongoDB and start server
+// ✅ Connect MongoDB and start server
 mongoose
   .connect(uri)
   .then(() => {
@@ -169,3 +158,4 @@ mongoose
   .catch((err) => {
     console.error("❌ MongoDB connection failed", err);
   });
+

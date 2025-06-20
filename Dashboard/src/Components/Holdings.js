@@ -1,14 +1,15 @@
-// --- Holdings.jsx ---
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { VerticalGraph } from "./VerticalGraph";
 import "./Holding.css"; // If you create a CSS file
+import "./Responsive.css";
 
 const Holdings = () => {
   const [allHoldings, setAllHoldings] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3002/allHoldings")
+    const backendBaseUrl = process.env.REACT_APP_BACKEND_URL || "";
+    axios.get(`${backendBaseUrl}/allHoldings`)
       .then((res) => setAllHoldings(res.data))
       .catch((err) => console.error("Error fetching holdings:", err));
   }, []);
@@ -16,7 +17,7 @@ const Holdings = () => {
   const totalInvestment = allHoldings.reduce((acc, stock) => acc + stock.avg * stock.qty, 0);
   const currentValue = allHoldings.reduce((acc, stock) => acc + stock.price * stock.qty, 0);
   const pnl = currentValue - totalInvestment;
-  const pnlPercent = ((pnl / totalInvestment) * 100).toFixed(2);
+  const pnlPercent = totalInvestment ? ((pnl / totalInvestment) * 100).toFixed(2) : "0.00";
 
   const labels = allHoldings.map((stock) => stock.name);
   const data = {

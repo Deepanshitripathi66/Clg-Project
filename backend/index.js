@@ -9,12 +9,12 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
 
-// Mongo URL Validation
+// MongoDB URL Validation
 function isValidMongoUrl(url) {
   return typeof url === "string" && url.startsWith("mongodb");
 }
 if (!isValidMongoUrl(uri)) {
-  console.error("Invalid MONGO_URL");
+  console.error("❌ Invalid MONGO_URL");
   process.exit(1);
 }
 
@@ -22,11 +22,13 @@ if (!isValidMongoUrl(uri)) {
 app.use(cors());
 app.use(bodyParser.json());
 
-// Serve React build files
-app.use("/dashboard", express.static(path.join(__dirname, "Dashboard/build")));
-app.use("/", express.static(path.join(__dirname, "frontend/build")));
+// ✅ Serve React and Dashboard build files
+app.use("/dashboard", express.static(path.join(__dirname, "../Dashboard/build")));
+app.use("/", express.static(path.join(__dirname, "../frontend/build")));
 
-// API Endpoints
+// ✅ API Endpoints
+
+// Get all holdings
 app.get("/allHoldings", async (req, res) => {
   try {
     const { HoldingsModel } = require("./model/HoldingsModel");
@@ -37,7 +39,7 @@ app.get("/allHoldings", async (req, res) => {
   }
 });
 
-// New endpoint to recalculate and update net and day changes for all holdings
+// Update net/day in holdings
 app.post("/updateHoldingsNetDay", async (req, res) => {
   try {
     const { HoldingsModel } = require("./model/HoldingsModel");
@@ -64,6 +66,7 @@ app.post("/updateHoldingsNetDay", async (req, res) => {
   }
 });
 
+// Get all positions
 app.get("/allPositions", async (req, res) => {
   try {
     const { PositionsModel } = require("./model/PositionsModel");
@@ -74,6 +77,7 @@ app.get("/allPositions", async (req, res) => {
   }
 });
 
+// Place a new order
 app.post("/newOrder", async (req, res) => {
   try {
     const { OrdersModel } = require("./model/OrdersModel");
@@ -90,9 +94,7 @@ app.post("/newOrder", async (req, res) => {
         const totalCost = holding.avg * holding.qty + newOrder.price * newOrder.qty;
         const newAvg = totalCost / totalQty;
 
-        // Calculate net change and day change
         const netChange = (newOrder.price - newAvg) * totalQty;
-        // For day change, assuming previous price is holding.price
         const dayChange = newOrder.price - holding.price;
 
         holding.qty = totalQty;
@@ -103,7 +105,6 @@ app.post("/newOrder", async (req, res) => {
 
         await holding.save();
       } else {
-        // For new holding, set net and day change to 0
         holding = new HoldingsModel({
           name: newOrder.name,
           qty: newOrder.qty,
@@ -122,22 +123,22 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-// Frontend wildcard route
+// ✅ React & Dashboard Routing fallback (wildcard)
 app.get("*", (req, res) => {
   if (req.originalUrl.startsWith("/dashboard")) {
-    res.sendFile(path.join(__dirname, "Dashboard/build/index.html"));
+    res.sendFile(path.join(__dirname, "../Dashboard/build/index.html"));
   } else {
-    res.sendFile(path.join(__dirname, "frontend/build/index.html"));
+    res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
   }
 });
 
-  // MongoDB connection + Server start
-  mongoose
-    .connect(uri)
-    .then(() => {
-      console.log("Connected to MongoDB");
-      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    })
-    .catch((err) => {
-      console.error("MongoDB connection failed", err);
-    });
+// ✅ Connect MongoDB and start server
+mongoose
+  .connect(uri)
+  .then(() => {
+    console.log("✅ Connected to MongoDB");
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed", err);
+  });

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
+  "proxy": "http://localhost:3002",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",

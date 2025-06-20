@@ -6,9 +6,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 
+const bcrypt = require("bcrypt");
 const { HoldingsModel } = require("./model/HoldingsModel");
 const { PositionsModel } = require("./model/PositionsModel");
 const { OrdersModel } = require("./model/OrdersModel");
+const { UserModel } = require("./model/UserModel");
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -33,7 +35,33 @@ app.use("/", express.static(path.join(__dirname, "../frontend/build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
-  res.status(501).json({ message: "Signup route disabled" });
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new UserModel({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Signup error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 // API Endpoints

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // 👈 Axios import किया
+import axios from "axios";
 
 import "./Signup.css";
 
@@ -12,6 +12,7 @@ const Signup = () => {
 
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -42,19 +43,20 @@ const Signup = () => {
     if (!validate()) return;
 
     try {
-      // 👇 Render backend URL env variable से
-      const backendURL = process.env.REACT_APP_BACKEND_URL;
+      await axios.post("/signup", formData);
 
-      await axios.post(`${backendURL}/signup`, formData); // ✅ Signup request
-
-      // ✅ Success → Dashboard redirect
-      window.location.href = "/dashboard";
+      setShowSuccessModal(true);
     } catch (error) {
       console.error("Signup Error:", error);
       setErrorMessage(
-        error.response?.data || "Signup failed. Please try again."
+        error.response?.data?.message || "Signup failed. Please try again."
       );
     }
+  };
+
+  const closeModal = () => {
+    setShowSuccessModal(false);
+    window.location.href = "/dashboard";
   };
 
   return (
@@ -100,6 +102,15 @@ const Signup = () => {
 
         <button type="submit">Sign Up</button>
       </form>
+
+      {showSuccessModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>Signup successful</p>
+            <button onClick={closeModal}>OK</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

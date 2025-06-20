@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios"; // 👈 Axios import किया
+
 import "./Signup.css";
 
 const Signup = () => {
@@ -9,8 +11,7 @@ const Signup = () => {
   });
 
   const [errors, setErrors] = useState({});
-
-  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const validate = () => {
     const newErrors = {};
@@ -36,29 +37,30 @@ const Signup = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    // Placeholder for submit logic, e.g., API call
-    setSuccessMessage("Signup successful!");
-    setTimeout(() => {
-      window.location.href = "/dashboard"; // redirect to dashboard app
-    }, 3000);
-  };
 
-  useEffect(() => {
-    if (successMessage) {
-      const timer = setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
-      return () => clearTimeout(timer);
+    try {
+      // 👇 Render backend URL env variable से
+      const backendURL = process.env.REACT_APP_BACKEND_URL;
+
+      await axios.post(`${backendURL}/signup`, formData); // ✅ Signup request
+
+      // ✅ Success → Dashboard redirect
+      window.location.href = "/dashboard";
+    } catch (error) {
+      console.error("Signup Error:", error);
+      setErrorMessage(
+        error.response?.data || "Signup failed. Please try again."
+      );
     }
-  }, [successMessage]);
+  };
 
   return (
     <div className="signup-container">
       <h2>Sign Up</h2>
-      {successMessage && <div className="success-popup">{successMessage}</div>}
+      {errorMessage && <div className="error">{errorMessage}</div>}
       <form onSubmit={handleSubmit} noValidate>
         <div>
           <label htmlFor="name">Name:</label>

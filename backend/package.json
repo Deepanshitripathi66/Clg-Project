@@ -7,8 +7,10 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
-  },
+  "start": "node index.js",
+  "dev": "nodemon index.js"
+},
+
   "engines": {
     "node": ">=22.16.0",
     "npm": ">=6.0.0"

@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -5,7 +6,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 
-const { UserModel } = require("./model/UserModel");
 const { HoldingsModel } = require("./model/HoldingsModel");
 const { PositionsModel } = require("./model/PositionsModel");
 const { OrdersModel } = require("./model/OrdersModel");
@@ -33,21 +33,7 @@ app.use("/", express.static(path.join(__dirname, "../frontend/build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
-
-  try {
-    const existingUser = await UserModel.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json("User already exists");
-    }
-
-    const newUser = new UserModel({ name, email, password });
-    await newUser.save();
-    res.status(201).json("User created successfully");
-  } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json("Error signing up");
-  }
+  res.status(501).json({ message: "Signup route disabled" });
 });
 
 // API Endpoints

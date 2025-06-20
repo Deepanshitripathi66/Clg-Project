@@ -4,6 +4,7 @@
     "express": "^4.18.2"
   },
   "scripts": {
-    "start": "cd backend && npm start"
+    "start": "cd backend && npm start",
+    "start:all": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm start"
   }
 }

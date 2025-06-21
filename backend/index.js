@@ -25,13 +25,13 @@ if (!uri || !uri.startsWith("mongodb")) {
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ Serve frontend build
-app.use("/", express.static(path.join(__dirname, "frontend", "build")));
+// ✅ Serve Frontend React Build (frontend is outside backend folder)
+app.use("/", express.static(path.join(__dirname, "..", "frontend", "build")));
 
-// ✅ Serve dashboard build
+// ✅ Serve Dashboard React Build (dashboard is inside backend folder)
 app.use("/dashboard", express.static(path.join(__dirname, "dashboard", "build")));
 
-// ✅ Signup Route
+// ✅ API: Signup Route
 app.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -75,7 +75,6 @@ app.post("/updateHoldingsNetDay", async (req, res) => {
       } else {
         const netChange = (holding.price - holding.avg) * holding.qty;
         const dayChange = holding.pricePrev ? holding.price - holding.pricePrev : 0;
-
         holding.net = netChange.toFixed(2);
         holding.day = dayChange.toFixed(2);
       }
@@ -104,9 +103,8 @@ app.post("/newOrder", async (req, res) => {
     const newOrder = new OrdersModel(req.body);
     await newOrder.save();
 
-    if (newOrder.mode && newOrder.mode.toLowerCase() === "buy") {
+    if (newOrder.mode?.toLowerCase() === "buy") {
       let holding = await HoldingsModel.findOne({ name: newOrder.name });
-
       if (holding) {
         const totalQty = holding.qty + newOrder.qty;
         const totalCost = holding.avg * holding.qty + newOrder.price * newOrder.qty;
@@ -120,7 +118,6 @@ app.post("/newOrder", async (req, res) => {
         holding.price = newOrder.price;
         holding.net = netChange.toFixed(2);
         holding.day = dayChange.toFixed(2);
-
         await holding.save();
       } else {
         holding = new HoldingsModel({
@@ -141,15 +138,14 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-// ✅ Dashboard fallback route (SPA)
+// ✅ Dashboard SPA fallback route
 app.get(/^\/dashboard(\/.*)?$/, (req, res) => {
-  console.log("Serving dashboard SPA for path:", req.path);
   res.sendFile(path.join(__dirname, "dashboard", "build", "index.html"));
 });
 
-// ✅ Frontend fallback route (SPA)
+// ✅ Frontend SPA fallback route
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "build", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "frontend", "build", "index.html"));
 });
 
 // ✅ Connect to MongoDB and start server

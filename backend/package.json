@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node index.js",
+    "start": "node backend/index.js",
     "dev": "nodemon index.js",
     "render-build": "npm install && npm install --prefix ../frontend && npm install --prefix dashboard/Dashboard && npm run build --prefix ../frontend && npm run build --prefix dashboard/Dashboard"
   },

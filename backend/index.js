@@ -141,6 +141,11 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
+app.get("/dashboard/", (req, res) => {
+  console.log("Serving dashboard SPA for /dashboard/ path");
+  res.sendFile(path.join(__dirname, "..", "dashboard", "build", "index.html"));
+});
+
 // ✅ Dashboard fallback route (SPA)
 app.get(/^\/dashboard(\/.*)?$/, (req, res) => {
   console.log("Serving dashboard SPA for path:", req.path);

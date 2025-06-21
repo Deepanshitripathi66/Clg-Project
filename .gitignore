@@ -1,7 +1,7 @@
 node_modules/
 **/node_modules/
-Dashboard/build/
-frontend/build/
+#Dashboard/build/
+#frontend/build/
 
 
 .env

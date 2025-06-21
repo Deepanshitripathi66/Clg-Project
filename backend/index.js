@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use("/", express.static(path.join(__dirname, "..", "frontend", "build")));
 
 // ✅ Serve dashboard build
-app.use("/dashboard", express.static(path.join(__dirname, "..", "dashboard", "build")));
+capp.use("/dashboard", express.static(path.join(__dirname, "..", "dashboard", "build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
@@ -142,7 +142,8 @@ app.post("/newOrder", async (req, res) => {
 });
 
 // ✅ Dashboard fallback route (SPA)
-app.get("/dashboard*", (req, res) => {
+app.get(/^\/dashboard(\/.*)?$/, (req, res) => {
+  console.log("Serving dashboard SPA for path:", req.path);
   res.sendFile(path.join(__dirname, "..", "dashboard", "build", "index.html"));
 });
 

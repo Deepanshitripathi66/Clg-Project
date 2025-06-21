@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "render-build": "npm install && npm install --prefix ../frontend && npm install --prefix dashboard && npm run build --prefix ../frontend && npm run build --prefix dashboard"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
 
-// ✅ MongoDB URL Validation
+// ✅ Validate Mongo URI
 if (!uri || !uri.startsWith("mongodb")) {
   console.error("❌ Invalid or missing MONGO_URL");
   process.exit(1);
@@ -25,9 +25,11 @@ if (!uri || !uri.startsWith("mongodb")) {
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ Serve static files (React build)
-app.use("/", express.static(path.join(__dirname, "frontend")));
-app.use("/dashboard", express.static(path.join(__dirname, "Dashboard", "build")));
+// ✅ Serve frontend build (React app)
+app.use("/", express.static(path.join(__dirname, "..", "frontend", "build")));
+
+// ✅ Serve dashboard build
+app.use("/dashboard", express.static(path.join(__dirname, "..", "dashboard", "build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
@@ -139,17 +141,17 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-// ✅ Dashboard Fallback (for React SPA)
+// ✅ Dashboard fallback route (SPA)
 app.get("/dashboard*", (req, res) => {
-  res.sendFile(path.join(__dirname, "Dashboard", "build", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "dashboard", "build", "index.html"));
 });
 
-// ✅ Frontend Fallback (for React SPA)
+// ✅ Frontend fallback route (SPA)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/index.html"));
+  res.sendFile(path.join(__dirname, "..", "frontend", "build", "index.html"));
 });
 
-// ✅ Connect MongoDB and Start Server
+// ✅ Connect to MongoDB and start server
 mongoose
   .connect(uri)
   .then(() => {

@@ -28,8 +28,10 @@ app.use(bodyParser.json());
 // ✅ Serve Frontend React Build (frontend is outside backend folder)
 app.use("/", express.static(path.join(__dirname, "..", "frontend", "build")));
 
+const dashboardBuildPath = process.env.DASHBOARD_BUILD_PATH || path.join(__dirname, "dashboard", "build");
+
 // ✅ Serve Dashboard React Build (dashboard is inside backend folder)
-app.use("/dashboard", express.static(path.join(__dirname, "dashboard", "build")));
+app.use("/dashboard", express.static(dashboardBuildPath));
 
 // ✅ API: Signup Route
 app.post("/signup", async (req, res) => {
@@ -140,7 +142,7 @@ app.post("/newOrder", async (req, res) => {
 
 // ✅ Dashboard SPA fallback route
 app.get(/^\/dashboard(\/.*)?$/, (req, res) => {
-  res.sendFile(path.join(__dirname, "dashboard", "build", "index.html"));
+  res.sendFile(path.join(dashboardBuildPath, "index.html"));
 });
 
 // ✅ Frontend SPA fallback route

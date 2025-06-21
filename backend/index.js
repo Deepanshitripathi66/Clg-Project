@@ -26,10 +26,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // ✅ Serve static files (React build)
-const projectRoot = path.resolve(__dirname, "..");
-
 app.use("/", express.static(path.join(__dirname, "frontend")));
-app.use("/dashboard", express.static(path.join(__dirname, "..", "Dashboard", "build")));
+app.use("/dashboard", express.static(path.join(__dirname, "Dashboard", "build")));
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
@@ -141,16 +139,17 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-// ✅ Fallback route for React and Dashboard (Single Page App)
-app.get("*", (req, res) => {
-if (req.originalUrl.startsWith("/dashboard")) {
-    res.sendFile(path.join(__dirname, "..", "Dashboard", "build", "index.html"));
-  } else {
-    res.sendFile(path.join(__dirname, "frontend/index.html"));
-  }
+// ✅ Dashboard Fallback (for React SPA)
+app.get("/dashboard*", (req, res) => {
+  res.sendFile(path.join(__dirname, "Dashboard", "build", "index.html"));
 });
 
-// ✅ Connect MongoDB and start server
+// ✅ Frontend Fallback (for React SPA)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/index.html"));
+});
+
+// ✅ Connect MongoDB and Start Server
 mongoose
   .connect(uri)
   .then(() => {
@@ -160,4 +159,3 @@ mongoose
   .catch((err) => {
     console.error("❌ MongoDB connection failed", err);
   });
-

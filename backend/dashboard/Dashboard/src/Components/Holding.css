@@ -1,0 +1,55 @@
+.order-table {
+  overflow-x: auto;
+}
+
+.order-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  min-width: 600px; /* Ensure table is scrollable on small screens */
+}
+
+.order-table th, .order-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.profit {
+  color: green;
+  font-weight: bold;
+}
+
+.loss {
+  color: red;
+  font-weight: bold;
+}
+
+/* Responsive styles for smartphones */
+@media (max-width: 600px) {
+  .row {
+    flex-direction: column !important;
+    align-items: center;
+    width: 100%;
+  }
+
+  .col {
+    margin-bottom: 15px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .order-table {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .order-table table {
+    font-size: 12px;
+    min-width: 600px;
+  }
+
+  .order-table th, .order-table td {
+    padding: 6px;
+  }
+}
